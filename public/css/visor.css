@@ -1,170 +1,155 @@
-.visor_bg{
-    background-image: url("../assets/png/—Pngtree—mountain\ background\ pixel\ scene_6021586.png");
+/* .visor_bg {
+    background-image: url("../assets/png/—Pngtree—mountain background pixel scene_6021586.png"); 
     background-size: cover;
     background-repeat: repeat-y;
-    /* El background al princpio podría estar abajo */
-    background-position-y: 0px;
+    background-position-y: 0px; 
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+} */
+
+/* .grayBackground1 {
+    animation: grayBackground1 4s forwards;
 }
 
-.fondoGris1{
-    animation: fondoGris1;
-    animation-duration: 4s;
-    animation-fill-mode: forwards;
+.grayBackground2 {
+    animation: grayBackground2 4s forwards;
 }
 
-.fondoGris2{
-    animation: fondoGris2;
-    animation-duration: 4s;
-    animation-fill-mode: forwards;
-}
+.grayBackground3 {
+    animation: grayBackground3 4s forwards;
+} */
 
-.fondoGris3{
-    animation: fondoGris3;
-    animation-duration: 4s;
-    animation-fill-mode: forwards;
-}
-
-@keyframes fondoGris1 {
-    from{
+/* @keyframes grayBackground1 {
+    from {
         filter: grayscale(0%);
-    }to{
+    }
+    to {
         filter: grayscale(100%);
     }
 }
 
-@keyframes fondoGris2 {
-    from{
+@keyframes grayBackground2 {
+    from {
         filter: grayscale(100%);
-    }to{
+    }
+    to {
         filter: grayscale(50%);
     }
 }
 
-@keyframes fondoGris3 {
-    from{
+@keyframes grayBackground3 {
+    from {
         filter: grayscale(50%);
-    }to{
+    }
+    to {
         filter: grayscale(0%);
     }
-}
+} */
 
-.container__visor{
+/* .container_visor {
     position: relative;
     background-size: cover;
     background-repeat: repeat-y;
     z-index: 0;
     background-color: rgb(175, 226, 255);
-    /* podriía ser overflow:hidden y alomejor inherit */
     border: 10px solid black;
-}
+    overflow: hidden;
+} */
 
+/* .graySky {
+    animation: graySky 2s forwards;
+} */
 
-.cieloGris{
-    animation: cieloGris;
-    animation-duration: 2s;
-    animation-fill-mode: forwards;
-}
+/* .orangeSky {
+    animation: orangeSky 4s forwards;
+} */
 
-.cieloNaranja{
-    animation: cieloNaranja;
-    animation-duration: 4s;
-    animation-fill-mode: forwards;
-}
+/* .blueSky {
+    animation: blueSky 4s forwards;
+} */
 
-.cieloAzul{
-    animation: cieloAzul;
-    animation-duration: 4s;
-    animation-fill-mode: forwards;
-}
+/* .initialSky {
+    animation: initialSky 4s forwards;
+} */
 
-.cieloInicial{
-    animation: cieloInicial;
-    animation-duration: 4s;
-    animation-fill-mode: forwards;
-}
-
-
-@keyframes cieloInicial {
-    from{
-        background-color: rgb(175, 226, 255);
-    }to{
-        background-color: black;
-    }
-}
-
-@keyframes cieloGris {
-    from{
-        background-color: black;
-    }to{
-        background-color: grey;
-    }
-}
-
-@keyframes cieloNaranja {
-    from{
-        background-color: grey;
-    }to{
-        background-color: rgb(115, 131, 141);
-    }
-}
-
-@keyframes cieloAzul {
-    from{
-        background-color: rgb(115, 131, 141);
-    }to{
+/* @keyframes initialSky {
+    from {
         background-color: rgb(175, 226, 255);
     }
-}
+    to {
+        background-color: black;
+    }
+} */
 
+/* @keyframes graySky {
+    from {
+        background-color: black;
+    }
+    to {
+        background-color: grey;
+    }
+} */
 
-.container__nubes--1{
+/* @keyframes orangeSky {
+    from {
+        background-color: grey;
+    }
+    to {
+        background-color: rgb(115, 131, 141);
+    }
+} */
+
+/* @keyframes blueSky {
+    from {
+        background-color: rgb(115, 131, 141);
+    }
+    to {
+        background-color: rgb(175, 226, 255);
+    }
+} */
+
+/* .container__clouds--1 {
     position: absolute;
     z-index: 0;
     top: 50px;
     left: 0;
     height: 150px;
-}
+} */
 
-.animacion__infinito{
-    animation: nubes 60s linear infinite;
+/* .infinite_animation {
+    animation: clouds 60s linear infinite;
     animation-delay: -15s;
-}
+} */
 
-@keyframes nubes {
-    from{
+/* @keyframes clouds {
+    from {
         transform: translateX(+900px);
-    }to{
+    }
+    to {
         transform: translateX(-200px);
     }
-}
+} */
 
-
-
-
-@keyframes montanaAnim {
-    0%{
+/* @keyframes mountainAnimation {
+    0% {
         opacity: 0;
     }
     80% {
         opacity: 1;
     }
-}
+} */
 
-
-.visor__main{
-    /*display: flex;*/
+/* .main_visor {
     width: 100%;
     height: 80%;
     position: relative;
     overflow: hidden;
-}
+} */
 
-.main__boton{
+.main__button {
     height: 120px;
     width: 100%;
     display: flex;
@@ -173,12 +158,12 @@
     top: 400px;
 }
 
-.a__boton{
+.button__image {
     width: 120px;
     height: 100px;
 }
 
-.letraTituloGrande{
+/* .largeTitleFont {
     font-family: pixelThaleah;
     font-size: 5em;
     position: absolute;
@@ -189,9 +174,9 @@
     display: block;
     width: 100%;
     top: 20px;
-}
+} */
 
-.letraTituloPeq{
+/* .smallTitleFont {
     font-family: pixelThaleah;
     font-size: 4em;
     position: absolute;
@@ -202,4 +187,4 @@
     display: block;
     width: 100%;
     top: 200px;
-}
+} */

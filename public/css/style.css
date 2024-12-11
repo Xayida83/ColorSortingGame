@@ -8,12 +8,12 @@ body{
     justify-content: center;
 }
 
-@font-face {
+/* @font-face {
     font-family: "pixelThaleah";
     src: url("../assets/fount/ThaleahFat.ttf");
-}
+} */
 
-.container{
+/* .container{
     margin: auto;
     display: grid;
     background-image: url("../assets/jpg/simon-sanchez-madera-tilex1.jpg");
@@ -33,11 +33,11 @@ body{
     border: 10px solid black;
 
 
-}
+} */
 
 
 
-.aside__container{
+/* .aside__container{
     position: relative;
     z-index: 25;
     width: 100%;
@@ -45,4 +45,4 @@ body{
     background-image: url("../assets/jpg/simon-sanchez-madera-tilex1.jpg");
     background-repeat: repeat-x;
     background-size: 400px;
-}
+} */

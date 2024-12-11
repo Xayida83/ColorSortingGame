@@ -1,570 +1,579 @@
-let visor__main = document.getElementById("visor__main");
+// Main visor element
+let visorMain = document.getElementById("visor__main");
 
-let nivel;
-let MAXniveles;
-let MAXfrascos;
-let MAXbolas;
-let character_1;
-let posAnterior;
-let tiempo;
-let tiempoBase = 40;
+let level; // Current level
+let maxLevels; // Maximum number of levels
+let maxJars; // Maximum number of jars (containers)
+let maxBalls; // Maximum number of balls
+let currentCharacter; // Current character being interacted with
+let previousPosition; // Previous position of the ball
+let timer; // Timer for the game
+let baseTime = 40; // Base time for timer
 
-let arrayFrascos = [];
-let bolasFrascos = [];
-let click = true;
+let jarArray = []; // Array to hold the jars
+let jarBalls = []; // Array to hold the balls in each jar
+let isClickable = true; // Flag to manage click behavior
 
-let intervalo;
+let interval; // Interval for the timer
 
-let FIN = false;
+let isGameOver = false; // Flag to indicate the end of the game
 
+// Initialize the background audio globally as backgroundAudio
+let backgroundAudio = new Audio("./assets/audio/musicaBackground.wav");
+backgroundAudio.volume = 0.1; // Set background audio volume
+backgroundAudio.loop = true; // Enable looping for the background audio
 
-//inicializo el audio de fondo de forma global como audioBg
-let audioBg = new Audio("./assets/audio/musicaBackground.wav");
-audioBg.volume = 0.1;
-audioBg.loop = true;
-
-
-const audioSacaBola = () => {
+// Function to play "remove ball" sound
+const playRemoveBallSound = () => {
   let audio = new Audio("./assets/audio/sacarBola.wav");
   audio.volume = 0.6;
   audio.play();
 };
 
-const audioMeterBola = () => {
+// Function to play "place ball" sound
+const playPlaceBallSound = () => {
   let audio = new Audio("./assets/audio/meterBola.wav");
   audio.volume = 0.6;
   audio.play();
 };
 
-const audioMovimientoAtras = () => {
+
+// Function to play "failed move" sound
+const playFailedMoveSound = () => {
   let audio = new Audio("./assets/audio/movimientoFallido.wav");
   audio.volume = 0.4;
   audio.play();
 };
 
-const audioLevelUp = () => {
+// Function to play "level up" sound
+const playLevelUpSound = () => {
   let audio = new Audio("./assets/audio/lvlUp.wav");
   audio.volume = 0.5;
   audio.play();
 };
 
-const audioPerder = () => {
+// Function to play "game lost" sound
+const playGameLostSound = () => {
   let audio = new Audio("./assets/audio/juegoPerdido.mp3");
   audio.volume = 0.4;
   audio.play();
 };
 
-const audioGanar = () => {
+// Function to play "game won" sound
+const playGameWonSound = () => {
   let audio = new Audio("./assets/audio/juegoGanado.wav");
   audio.volume = 0.4;
   audio.play();
 };
 
-function actualizarEntorno(posAnt = null, posPost = null) {
-  function editarEntorno(posAnt, posPost) {
-    const main__frascos = document.getElementById("main__frascos");
 
-    while (main__frascos.children[posAnt].children.length > 0) {
-      main__frascos.children[posAnt].removeChild(
-        main__frascos.children[posAnt].firstChild
+function updateEnvironment(previousPos = null, currentPos = null) {
+  function editEnvironment(previousPos, currentPos) {
+    const mainJarsContainer = document.getElementById("main__frascos");
+
+    // Clear all children from the previous position jar
+    while (mainJarsContainer.children[previousPos].children.length > 0) {
+      mainJarsContainer.children[previousPos].removeChild(
+        mainJarsContainer.children[previousPos].firstChild
       );
     }
 
-    for (let index = 0; index < arrayFrascos[posAnt].length; index++) {
-      let bola = document.createElement("DIV");
-      bola.classList.add("pixel-ball");
-      bola.classList.add("color" + arrayFrascos[posAnt][index]);
-      main__frascos.children[posAnt].append(bola);
+    // Add balls to the previous position jar
+    for (let index = 0; index < jarArray[previousPos].length; index++) {
+      let ball = document.createElement("DIV");
+      ball.classList.add("pixel-ball");
+      ball.classList.add("color" + jarArray[previousPos][index]);
+      mainJarsContainer.children[previousPos].append(ball);
     }
 
-    if (posAnt != posPost) {
-      while (main__frascos.children[posPost].children.length > 0) {
-        main__frascos.children[posPost].removeChild(
-          main__frascos.children[posPost].firstChild
+    // If the current position is different, update it
+    if (previousPos !== currentPos) {
+      while (mainJarsContainer.children[currentPos].children.length > 0) {
+        mainJarsContainer.children[currentPos].removeChild(
+          mainJarsContainer.children[currentPos].firstChild
         );
       }
 
-      for (let index = 0; index < arrayFrascos[posPost].length; index++) {
-        let bola = document.createElement("DIV");
-        bola.classList.add("pixel-ball");
-        bola.classList.add("color" + arrayFrascos[posPost][index]);
-        main__frascos.children[posPost].append(bola);
+      for (let index = 0; index < jarArray[currentPos].length; index++) {
+        let ball = document.createElement("DIV");
+        ball.classList.add("pixel-ball");
+        ball.classList.add("color" + jarArray[currentPos][index]);
+        mainJarsContainer.children[currentPos].append(ball);
       }
     }
   }
 
-  function generarEntorno() {
-    let main__frascos = document.createElement("DIV");
-    main__frascos.style.display = "flex";
-    main__frascos.style.justifyContent = "center";
-    main__frascos.style.position = "relative";
-    main__frascos.style.top = "130px";
-    main__frascos.id = "main__frascos";
+  function generateEnvironment() {
+    const mainJarsContainer = document.createElement("DIV");
+    mainJarsContainer.style.display = "flex";
+    mainJarsContainer.style.justifyContent = "center";
+    mainJarsContainer.style.position = "relative";
+    mainJarsContainer.style.top = "130px";
+    mainJarsContainer.id = "main__frascos";
 
-    //Añado un listener al contenedor de los frascos
-    main__frascos.addEventListener("click", accionFrasco);
+    // Add a click listener to the jar container
+    mainJarsContainer.addEventListener("click", jarAction);
 
-    let frascos = document.createDocumentFragment();
-    for (let index = 0; index < arrayFrascos.length; index++) {
-      let frasco = document.createElement("DIV");
-      frasco.classList.add("visor__frasco");
-      frasco.style.height = (40 * MAXbolas + 15).toString() + "px";
-      frasco.id = "frasco" + index;
-      frasco.style.position = "relative";
-      frasco.style.top = "0";
-      let bolas = document.createDocumentFragment();
+    let jarsFragment = document.createDocumentFragment();
+    for (let index = 0; index < jarArray.length; index++) {
+      let jar = document.createElement("DIV");
+      jar.classList.add("jar_visual");
+      jar.style.height = (40 * maxBalls + 15).toString() + "px";
+      jar.id = "jar" + index;
+      jar.style.position = "relative";
+      jar.style.top = "0";
 
-      //frasco.addEventListener("click", accionFrasco);
+      let ballsFragment = document.createDocumentFragment();
 
-      for (let index2 = 0; index2 < arrayFrascos[index].length; index2++) {
-        let bola = document.createElement("DIV");
-        bola.classList.add("pixel-ball");
-        bola.classList.add("color" + arrayFrascos[index][index2]);
-        bolas.append(bola);
+      for (let ballIndex = 0; ballIndex < jarArray[index].length; ballIndex++) {
+        let ball = document.createElement("DIV");
+        ball.classList.add("pixel-ball");
+        ball.classList.add("color" + jarArray[index][ballIndex]);
+        ballsFragment.append(ball);
       }
-      frasco.append(bolas);
-      frascos.append(frasco);
-      main__frascos.append(frascos);
-      visor__main.append(main__frascos);
-      //visor__main.append(frascos);
+
+      jar.append(ballsFragment);
+      jarsFragment.append(jar);
+      mainJarsContainer.append(jarsFragment);
+      visorMain.append(mainJarsContainer);
     }
   }
 
-  if (posAnt === null && posPost === null) {
-    generarEntorno();
+  if (previousPos === null && currentPos === null) {
+    generateEnvironment();
   } else {
-    editarEntorno(posAnt, posPost);
+    editEnvironment(previousPos, currentPos);
   }
 }
 
-const iniciaEntorno = () => {
-  if (!audioBg.paused) {
-    audioBg.pause();
-    audioBg.currentTime = 0;
+const initializeEnvironment = () => {
+  // Stop and reset background audio if it's playing
+  if (!backgroundAudio.paused) {
+    backgroundAudio.pause();
+    backgroundAudio.currentTime = 0;
   }
 
-  audioBg.play();
+  backgroundAudio.play();
 
-  if (arrayFrascos.length != 0) {
-    arrayFrascos = [];
-  }
-  if (bolasFrascos.length != 0) {
-    bolasFrascos = [];
-  }
+  // Reset jar and ball arrays
+  if (jarArray.length !== 0) jarArray = [];
+  if (jarBalls.length !== 0) jarBalls = [];
 
-  //inicioTempo();
-  character_1 = visor__main.querySelector("#character_1");
-  character_1.remove();
+  // Remove previous character and UI elements
+  const character1 = visorMain.querySelector("#character_1");
+  character1?.remove();
 
-  let main__section = document.getElementById("main__section");
-  main__section.remove();
+  const mainSection = document.getElementById("main__section");
+  mainSection?.remove();
 
-  textoTitulo = visor__main.querySelector("#visor__div__texto");
-  if (textoTitulo != null) {
-    textoTitulo.remove();
-  }
+  const titleText = visorMain.querySelector("#visor__div__texto");
+  titleText?.remove();
 
-  //configuración de constantes. (Son los parámetros con los que empieza el juego, van cambiando por cada nivel)
-  tiempo = 40;
-  nivel = 0;
-  MAXniveles = 3;
-  MAXfrascos = 4;
-  MAXbolas = 4;
+  // Set initial game parameters
+  timer = 40;
+  level = 0;
+  maxLevels = 3;
+  maxJars = 4;
+  maxBalls = 4;
 
-  tableroRand();
-  actualizarEntorno();
-  inicioTempo();
-  cieloColor(nivel);
+  // Generate a random board and initialize environment
+  generateRandomBoard();
+  updateEnvironment();
+  startTimer();
+  updateSkyColor(level);
 };
 
-function tableroRand() {
-  //Siempre dejo dos frascos vacíos para poder jugar
-  for (let index = 0; index < MAXfrascos; index++) {
-    bolasFrascos = [];
-    arrayFrascos.push(bolasFrascos);
-    if (index < MAXfrascos - 2) {
-      for (let index2 = 0; index2 < MAXbolas; index2++) {
-        bolasFrascos.push(index);
+
+function generateRandomBoard() {
+  // Always leave two jars empty for gameplay
+  for (let i = 0; i < maxJars; i++) {
+    let jarBalls = [];
+    jarArray.push(jarBalls);
+    if (i < maxJars - 2) {
+      // Fill jars with balls up to the maxBalls limit
+      for (let j = 0; j < maxBalls; j++) {
+        jarBalls.push(i);
       }
     }
   }
 
   do {
-    //Barajo las bolas tantas veces como bolas por frascos haya
-    for (let index = 0; index < MAXfrascos * (MAXfrascos - 2); index++) {
-      const randomFrasco1 = Math.floor(Math.random() * (MAXfrascos - 2));
-      const randomBola1 = Math.floor(Math.random() * MAXbolas);
-      const randomFrasco2 = Math.floor(Math.random() * (MAXfrascos - 2));
-      const randomBola2 = Math.floor(Math.random() * MAXbolas);
+    // Shuffle the balls multiple times based on the number of jars and balls
+    for (let i = 0; i < maxJars * (maxJars - 2); i++) {
+      const randomJar1 = Math.floor(Math.random() * (maxJars - 2));
+      const randomBall1 = Math.floor(Math.random() * maxBalls);
+      const randomJar2 = Math.floor(Math.random() * (maxJars - 2));
+      const randomBall2 = Math.floor(Math.random() * maxBalls);
 
-      let aux = arrayFrascos[randomFrasco1][randomBola1];
-      arrayFrascos[randomFrasco1][randomBola1] =
-        arrayFrascos[randomFrasco2][randomBola2];
-      arrayFrascos[randomFrasco2][randomBola2] = aux;
+      // Swap balls between two randomly selected positions
+      let temp = jarArray[randomJar1][randomBall1];
+      jarArray[randomJar1][randomBall1] = jarArray[randomJar2][randomBall2];
+      jarArray[randomJar2][randomBall2] = temp;
     }
-  } while (recorridoGanado()); // si invierto la comprobación, el tablero comienza ordenado 
-  // Compruebo que el tablero generado no se genera comienza ordenado
+  } while (isBoardSolved()); 
+  // Ensure the generated board isn't solved at the start
 }
 
-const inicioTempo = () => {
-  const visorHeader__div__temporizador = document.getElementById(
-    "visorHeader__div__temporizador"
-  );
-  visorHeader__div__temporizador.classList.add("temporizadorOn");
+const startTimer = () => {
+  const timerElement = document.getElementById("visorHeader__div__temporizador");
+  timerElement.classList.add("timerOn");
 
-  let minutos = Math.floor(tiempo / 60).toString();
-  let segundos = Math.floor(tiempo % 60).toString();
-  visorHeader__div__temporizador.children[1].textContent =
-    minutos.padStart(2, "0") + ":" + segundos.padStart(2, "0");
+  // Format and display the initial time
+  let minutes = Math.floor(timer / 60).toString();
+  let seconds = Math.floor(timer % 60).toString();
+  timerElement.children[1].textContent =
+    minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0");
 
-  intervalo = setInterval(() => {
-    tiempo--;
+  // Start countdown interval
+  interval = setInterval(() => {
+    timer--;
 
-    let minutos = Math.floor(tiempo / 60).toString();
-    let segundos = Math.floor(tiempo % 60).toString();
+    // Update time display
+    let minutes = Math.floor(timer / 60).toString();
+    let seconds = Math.floor(timer % 60).toString();
+    timerElement.children[1].textContent =
+      minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0");
 
-    visorHeader__div__temporizador.children[1].textContent =
-      minutos.padStart(2, "0") + ":" + segundos.padStart(2, "0");
-
-    if (tiempo == 0) {
+    // Handle when timer reaches 0
+    if (timer === 0) {
       debugger;
-      ganado = false;
-      audioPerder();
-      borraEntorno();
-      inicioFin(ganado);
+      let isWon = false;
+      playGameLostSound();
+      clearEnvironment();
+      showGameEndScreen(isWon);
     }
   }, 1000);
 };
 
-function cargaPersonaje() {
-  let character_1 = document.createElement("IMG");
-  character_1.style.position = "absolute";
-  character_1.style.zIndex = "30";
-  character_1.style.height = "400px";
-  character_1.style.width = "400px";
-  character_1.style.left = "650px";
-  character_1.style.top = "90px";
-  character_1.id = "character_1";
-  character_1.alt = "Theo_personaje"
+function loadCharacter() {
+  let characterElement = document.createElement("IMG");
+  characterElement.style.position = "absolute";
+  characterElement.style.zIndex = "30";
+  characterElement.style.height = "400px";
+  characterElement.style.width = "400px";
+  characterElement.style.left = "650px";
+  characterElement.style.top = "90px";
+  characterElement.id = "character_1";
+  characterElement.alt = "Theo_character";
   debugger;
-  character_1.src = "assets/png/character2.png";
-  return character_1;
+  characterElement.src = "assets/png/character2";
+  return characterElement;
 }
 
-const inicioIntro = () => {
-  createTextoTitulo("LAS AVENTURAS DE THEO", "BallSortPuzzle");
+
+const startIntro = () => {
+  createTitleText("THE ADVENTURES OF THEO", "BallSortPuzzle");
 
   setTimeout(() => {
-    visor__div__texto.remove();
-    createTextoTitulo(null, "Ayuda a Theo a encontrar los colores");
-    tituloPequeño.style.top = "160px";
+    titleTextContainer.remove();
+    createTitleText(null, "Help Theo find the colors");
+    smallTitle.style.top = "160px";
 
     setTimeout(() => {
-      visor__div__texto.remove();
+      titleTextContainer.remove();
       debugger;
-      character_1 = cargaPersonaje();
-      visor__main.append(character_1);
-      creaBotonStart();
-      section__a.addEventListener("click", iniciaEntorno);
-    }, 4000);
-  }, 4000);
+      character1 = loadCharacter();
+      visorMain.append(character1);
+      createStartButton();
+      startButton.addEventListener("click", initializeEnvironment);
+    }, 4000); // Wait 4 seconds before displaying the start button and character
+  }, 4000); // Wait 4 seconds before updating the text
 };
 
-function createTextoTitulo(textoGrande = null, textoPequeño = null) {
-  visor__div__texto = document.createElement("DIV");
-  visor__div__texto.id = "visor__div__texto";
 
-  tituloGrande = document.createElement("H1");
-  tituloGrande.textContent = textoGrande;
-  tituloGrande.classList.add("letraTituloGrande");
+function createTitleText(largeText = null, smallText = null) {
+  titleTextContainer = document.createElement("DIV");
+  titleTextContainer.id = "titleTextContainer";
 
-  if (textoPequeño) {
-    tituloPequeño = document.createElement("H2");
-    tituloPequeño.textContent = textoPequeño;
-    tituloPequeño.classList.add("letraTituloPeq");
+  const largeTitle = document.createElement("H1");
+  largeTitle.textContent = largeText;
+  largeTitle.classList.add("largeTitleFont");
+
+  if (smallText) {
+    const smallTitle = document.createElement("H2");
+    smallTitle.textContent = smallText;
+    smallTitle.classList.add("smallTitleFont");
+    titleTextContainer.append(smallTitle);
   }
 
-  visor__div__texto.append(tituloGrande);
-  if (textoPequeño) {
-    visor__div__texto.append(tituloPequeño);
-  }
-  visor__main.append(visor__div__texto);
+  titleTextContainer.append(largeTitle);
+  visorMain.append(titleTextContainer);
 }
 
-const ganar = () => {
-  let ganado = recorridoGanado();
-  console.log("ganar" + ganado);
 
-  //Ahora deberia reiniciarse el TAD y el entorno y subir el nivel
-  //Solo hay tres niveles
-  if (ganado) {
-    nivel++;
-    arrayFrascos = [];
-    bolasFrascos = [];
-    if (nivel == MAXniveles) {
-      audioGanar();
-      borraEntorno();
-      tiempo = 0;
-      cieloColor(2);
-      inicioFin(ganado);
+const handleWinCondition = () => {
+  const isWon = isBoardSolved();
+  console.log("Win condition: " + isWon);
+
+  // Reset the board, environment, and increase level if won
+  if (isWon) {
+    level++;
+    jarArray = [];
+    jarBalls = [];
+
+    // If the maximum level is reached
+    if (level === maxLevels) {
+      playGameWonSound();
+      clearEnvironment();
+      timer = 0;
+      updateSkyColor(2); // Set sky color for the final level
+      showGameEndScreen(isWon);
     } else {
-      audioLevelUp();
-      MAXbolas++;
-      MAXfrascos++;
-      borraEntorno();
-      tableroRand();
-      actualizarEntorno();
-      cieloColor(nivel);
-      tiempo = tiempoBase + 10 * nivel; //cada nivel aumenta 10 segundos
+      playLevelUpSound();
+      maxBalls++;
+      maxJars++;
+      clearEnvironment();
+      generateRandomBoard();
+      updateEnvironment();
+      updateSkyColor(level);
+      timer = baseTime + 10 * level; // Add 10 seconds per level
     }
   }
 };
 
-const cieloColor = (nivel) => {
-  if (nivel > 2) {
-    nivel = 2;
-  }
 
-  const cielo = visor__main.parentNode;
-  const bg = cielo.firstChild.nextSibling;
-  switch (nivel) {
+const updateSkyColor = (level) => {
+  if (level > 2) level = 2; // Limit level to 2 for sky color changes
+
+  const sky = visorMain.parentNode;
+  const background = sky.firstChild.nextSibling;
+
+  switch (level) {
     case 0:
-      cielo.classList = [...cielo.classList].filter(
-        (clase) =>
-          clase != "cieloAzul" &&
-          clase != "cieloInicial" &&
-          clase != "cieloGris" &&
-          clase != "cieloNaranja"
+      sky.classList = [...sky.classList].filter(
+        (cls) =>
+          cls !== "blueSky" &&
+          cls !== "initialSky" &&
+          cls !== "graySky" &&
+          cls !== "orangeSky"
       );
-      cielo.classList.add("cieloGris");
+      sky.classList.add("graySky");
 
-      bg.classList = [...bg.classList].filter(
-        (clase) =>
-          clase != "fondoGris3" &&
-          clase != "fondoGris2" &&
-          clase != "fondoGris1"
+      background.classList = [...background.classList].filter(
+        (cls) =>
+          cls !== "grayBackground3" &&
+          cls !== "grayBackground2" &&
+          cls !== "grayBackground1"
       );
-      bg.classList.add("fondoGris1");
+      background.classList.add("grayBackground1");
       break;
+
     case 1:
-      cielo.classList.remove("cieloGris");
-      cielo.classList.add("cieloNaranja");
+      sky.classList.remove("graySky");
+      sky.classList.add("orangeSky");
 
-      bg.classList.remove("fondoGris1");
-      bg.classList.add("fondoGris2");
+      background.classList.remove("grayBackground1");
+      background.classList.add("grayBackground2");
       break;
+
     case 2:
-      cielo.classList.remove("cieloNaranja");
-      cielo.classList.add("cieloAzul");
+      sky.classList.remove("orangeSky");
+      sky.classList.add("blueSky");
 
-      bg.classList.remove("fondoGris2");
-      bg.classList.add("fondoGris3");
+      background.classList.remove("grayBackground2");
+      background.classList.add("grayBackground3");
       break;
+
     default:
       break;
   }
 };
 
-const borraEntorno = () => {
-  const main__frascos = document.getElementById("main__frascos");
 
-  if (main__frascos != null) {
-    main__frascos.remove();
+function clearEnvironment() {
+  const mainJars = document.getElementById("main__jars");
+
+  if (mainJars !== null) {
+    mainJars.remove();
   }
-};
-
-const accionFrasco = (e) => {
-  if (e.target.classList.length > 0) {
-    if (e.target.nodeName === "DIV") {
-      console.log(e.target.id);
-
-      if (e.target.classList[0].startsWith("pixel")) {
-        if (click) {
-          audioSacaBola();
-          posAnterior = parseInt(e.target.parentNode.id.slice(6));
-
-          let numeroBolas = arrayFrascos[posAnterior].length; //Cada bola mide 40px
-          //La bola ha de estar 75 px encima del frasco aprox (sin contar posible margin o padding)
-          e.target.parentNode.firstChild.style.top =
-            "-" + ((MAXbolas - numeroBolas) * 40 + 75).toString() + "px";
-
-          click = false;
-        } else {
-          posicionMeter = parseInt(e.target.parentNode.id.slice(6));
-          console.log("posicionMeter: " + posicionMeter);
-
-          let valorTop1 = arrayFrascos[posAnterior][0];
-          let valorTop2 = arrayFrascos[posicionMeter][0];
-          console.log("valores" + valorTop1 + valorTop2);
-
-          if (arrayFrascos[posicionMeter].length > 0) {
-            if (posAnterior == posicionMeter || valorTop1 != valorTop2) {
-              audioMovimientoAtras();
-              actualizarEntorno(posAnterior, posicionMeter);
-              click = true;
-            }
-          }
-          if (
-            !click &&
-            posAnterior != posicionMeter &&
-            posicionMeter >= 0 &&
-            posicionMeter < arrayFrascos.length
-          ) {
-            if (arrayFrascos[posicionMeter].length < MAXbolas) {
-              arrayFrascos[posicionMeter].unshift(
-                arrayFrascos[posAnterior].shift()
-              );
-              audioMeterBola();
-              actualizarEntorno(posAnterior, posicionMeter);
-              click = true;
-            }
-          }
-          /*else{
-        posicionMeter=parseInt(e.target.parentNode.id.slice(6));
-        const main__frascos=document.getElementById("main__frascos");
-        console.log(main__frascos)
-        main__frascos.children[posicionMeter].firstChild.style.top="0px";
-        click=true;
-      }*/
-          ganar();
-        }
-      }
-
-      if (e.target.id.startsWith("frasco")) {
-        console.log(click);
-        let posicionMeter;
-        console.log(e.target.id.slice(6));
-        if (click) {
-          console.log("sacar");
-          audioSacaBola();
-          //bolaCambio = e.target.parentNode.firstChild.classList[1].slice(5);
-          posAnterior = parseInt(e.target.id.slice(6));
-
-          let numeroBolas = arrayFrascos[posAnterior].length; //Cada bola mide 40px
-          //La bola ha de estar 75 px encima del frasco aprox (sin contar posible margin o padding)
-          e.target.firstChild.style.top =
-            "-" + ((MAXbolas - numeroBolas) * 40 + 75).toString() + "px";
-
-          click = false;
-        } else {
-          posicionMeter = parseInt(e.target.id.slice(6));
-          console.log("posicionMeter: " + posicionMeter);
-
-          let valorTop1 = arrayFrascos[posAnterior][0];
-          let valorTop2 = arrayFrascos[posicionMeter][0];
-          console.log("valores" + valorTop1 + valorTop2);
-
-          if (arrayFrascos[posicionMeter].length > 0) {
-            if (posAnterior == posicionMeter || valorTop1 != valorTop2) {
-              audioMovimientoAtras();
-              actualizarEntorno(posAnterior, posicionMeter);
-              click = true;
-            }
-          }
-
-          if (
-            !click &&
-            posAnterior != posicionMeter &&
-            posicionMeter >= 0 &&
-            posicionMeter < arrayFrascos.length
-          ) {
-            if (arrayFrascos[posicionMeter].length < MAXbolas) {
-              arrayFrascos[posicionMeter].unshift(
-                arrayFrascos[posAnterior].shift()
-              );
-              audioMeterBola();
-              actualizarEntorno(posAnterior, posicionMeter);
-              click = true;
-            }
-          } else {
-            const main__frascos = document.getElementById("main__frascos");
-            console.log(main__frascos);
-
-            click = true;
-          }
-          ganar();
-        }
-      }
-    }
-  }
-};
-
-function recorridoGanado() {
-  let ganado = true;
-  let contadorLlenas = 0;
-
-  for (let index = 0; index < arrayFrascos.length; index++) {
-    if (arrayFrascos[index].length == MAXbolas) {
-      contadorLlenas++;
-      let index2 = 1;
-      let bolaComprobar = arrayFrascos[index][0];
-      while (ganado && index2 < arrayFrascos[index].length) {
-        if (bolaComprobar != arrayFrascos[index][index2]) {
-          ganado = false;
-        }
-        index2++;
-      }
-    }
-  }
-  if (contadorLlenas != MAXfrascos - 2) {
-    ganado = false;
-  }
-  return ganado;
 }
 
-function inicioFin(ganado) {
-  apagarTemporizador();
 
-  if (ganado) {
-    console.log("Ganado");
-    createTextoTitulo(
-      "HAS GANADO",
-      "AYUDASTE A THEO A ENCONTRAR TODOS LOS COLORES"
+function handleJarClick(event) {
+  if (event.target.classList.length > 0) {
+    if (event.target.nodeName === "DIV") {
+      if (event.target.classList[0].startsWith("pixel")) {
+        if (click) {
+          playRemoveBallSound();
+          previousPosition = parseInt(event.target.parentNode.id.slice(6));
+
+          let ballCount = jarArray[previousPosition].length;
+          event.target.parentNode.firstChild.style.top =
+            "-" + ((maxBalls - ballCount) * 40 + 75).toString() + "px";
+
+          click = false;
+        } else {
+          const targetPosition = parseInt(event.target.parentNode.id.slice(6));
+
+          const topBallSource = jarArray[previousPosition][0];
+          const topBallTarget = jarArray[targetPosition][0];
+
+          if (jarArray[targetPosition].length > 0) {
+            if (
+              previousPosition === targetPosition ||
+              topBallSource !== topBallTarget
+            ) {
+              playFailedMoveSound();
+              updateEnvironment(previousPosition, targetPosition);
+              click = true;
+            }
+          }
+
+          if (
+            !click &&
+            previousPosition !== targetPosition &&
+            targetPosition >= 0 &&
+            targetPosition < jarArray.length
+          ) {
+            if (jarArray[targetPosition].length < maxBalls) {
+              jarArray[targetPosition].unshift(jarArray[previousPosition].shift());
+              playPlaceBallSound();
+              updateEnvironment(previousPosition, targetPosition);
+              click = true;
+            }
+          }
+
+          checkWinCondition();
+        }
+      }
+
+      if (event.target.id.startsWith("jar")) {
+        if (click) {
+          playRemoveBallSound();
+          previousPosition = parseInt(event.target.id.slice(6));
+
+          let ballCount = jarArray[previousPosition].length;
+          event.target.firstChild.style.top =
+            "-" + ((maxBalls - ballCount) * 40 + 75).toString() + "px";
+
+          click = false;
+        } else {
+          const targetPosition = parseInt(event.target.id.slice(6));
+
+          const topBallSource = jarArray[previousPosition][0];
+          const topBallTarget = jarArray[targetPosition][0];
+
+          if (jarArray[targetPosition].length > 0) {
+            if (
+              previousPosition === targetPosition ||
+              topBallSource !== topBallTarget
+            ) {
+              playFailedMoveSound();
+              updateEnvironment(previousPosition, targetPosition);
+              click = true;
+            }
+          }
+
+          if (
+            !click &&
+            previousPosition !== targetPosition &&
+            targetPosition >= 0 &&
+            targetPosition < jarArray.length
+          ) {
+            if (jarArray[targetPosition].length < maxBalls) {
+              jarArray[targetPosition].unshift(jarArray[previousPosition].shift());
+              playPlaceBallSound();
+              updateEnvironment(previousPosition, targetPosition);
+              click = true;
+            }
+          }
+
+          checkWinCondition();
+        }
+      }
+    }
+  }
+}
+
+
+
+function isBoardSolved() {
+  let isSolved = true;
+  let fullJarCount = 0;
+
+  for (let i = 0; i < jarArray.length; i++) {
+    // Check if the jar is full
+    if (jarArray[i].length === maxBalls) {
+      fullJarCount++;
+      let j = 1;
+      let firstBall = jarArray[i][0];
+
+      // Ensure all balls in the jar are the same
+      while (isSolved && j < jarArray[i].length) {
+        if (firstBall !== jarArray[i][j]) {
+          isSolved = false;
+        }
+        j++;
+      }
+    }
+  }
+
+  // Verify if all but two jars are full
+  if (fullJarCount !== maxJars - 2) {
+    isSolved = false;
+  }
+
+  return isSolved;
+}
+
+
+function handleGameEnd(isWon) {
+  stopTimer();
+
+  if (isWon) {
+    console.log("Game Won");
+    createTitleText(
+      "YOU WON!",
+      "YOU HELPED THEO FIND ALL THE COLORS"
     );
   } else {
-    console.log("No ganado");
-    createTextoTitulo("FIN", "HAS PERDIDO");
+    console.log("Game Lost");
+    createTitleText("GAME OVER", "YOU LOST");
   }
 
   setTimeout(() => {
-    visor__div__texto.remove();
+    titleTextContainer.remove();
 
-    if (ganado) {
-      createTextoTitulo("INTENTALO DE NUEVO", "BATE TU RECORD!");
+    if (isWon) {
+      createTitleText("TRY AGAIN", "BEAT YOUR RECORD!");
     } else {
-      createTextoTitulo("INTENTALO DE NUEVO", "PUEDES CONSEGUIRLO!");
+      createTitleText("TRY AGAIN", "YOU CAN DO IT!");
     }
 
-    character_1 = cargaPersonaje();
-    visor__main.append(character_1);
-    creaBotonStart();
-    section__a.addEventListener("click", iniciaEntorno);
+    character1 = loadCharacter();
+    visorMain.append(character1);
+    createStartButton();
+    startButton.addEventListener("click", initializeEnvironment);
   }, 4000);
 }
 
-function apagarTemporizador() {
-  const tablero = visor__main.previousElementSibling.querySelector(
+
+function stopTimer() {
+  const timerDisplay = visorMain.previousElementSibling.querySelector(
     "#visorHeader__div__temporizador"
   );
-  tablero.children[1].textContent = "00:00";
-  clearInterval(intervalo);
+  timerDisplay.children[1].textContent = "00:00"; // Set the timer to 0
+  clearInterval(interval); // Stop the interval
 }
 
-function creaBotonStart() {
-  main__section = document.createElement("SECTION");
-  section__a = document.createElement("A");
-  a__img = document.createElement("IMG");
 
-  main__section.classList.add("main__boton");
-  main__section.id = "main__section";
-  a__img.classList.add("a__boton");
-  a__img.src = "assets/png/—Pngtree—start button in pixel art_7949383 (1).png";
-  section__a.href = "#";
-  a__img.alt = "Imagen_start";
+function createStartButton() {
+  const mainSection = document.createElement("SECTION");
+  const startLink = document.createElement("A");
+  const startImage = document.createElement("IMG");
 
-  main__section.append(section__a);
-  section__a.append(a__img);
-  visor__main.appendChild(main__section);
+  mainSection.classList.add("main__button");
+  mainSection.id = "main__section";
+  startImage.classList.add("button__image");
+  startImage.src = "assets/png/—Pngtree—start button in pixel art_7949383 (1).png";
+  startLink.href = "#";
+  startImage.alt = "Start Button Image";
+
+  mainSection.append(startLink);
+  startLink.append(startImage);
+  visorMain.appendChild(mainSection);
 }
 
-document.addEventListener("DOMContentLoaded", inicioIntro);
+
+document.addEventListener("DOMContentLoaded", startIntro);
+
