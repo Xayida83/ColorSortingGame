@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  web:
+    image: nginx:alpine  # Använd färdig Nginx-bild
+    ports:
+      - "8080:80"  # Koppla port 8080 på din dator till port 80 i containern
+    volumes:
+      - ./public:/usr/share/nginx/html  # Koppla projektets 'public'-mapp till Nginx standardkatalog
+    restart: always  # Se till att containern startar om vid behov
