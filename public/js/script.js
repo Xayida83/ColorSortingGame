@@ -229,7 +229,7 @@ const startTime = () => {
     if (time == 0) {
       debugger;
       ganado = false;
-      audioLose();
+      // audioLose();
       deleteEnvironment();
       startEnd(ganado);
     }
@@ -302,13 +302,13 @@ const gain = () => {
     holdersArr = [];
     itemHolderArr = [];
     if (level == maxLevel) {
-      audioWin();
+      // audioWin();
       deleteEnvironment();
       time = 0;
       skyColor(2);
       startEnd(win);
     } else {
-      audioLevelUp();
+      // audioLevelUp();
       maxItems++;
       maxHolder++;
       deleteEnvironment();
