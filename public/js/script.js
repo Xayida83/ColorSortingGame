@@ -168,7 +168,7 @@ const gain = () => {
       // audioWin();
       deleteEnvironment();
       time = 0;
-      skyColor(2);
+      // skyColor(2);
       startEnd(win);
     } else {
       // audioLevelUp();
@@ -178,7 +178,7 @@ const gain = () => {
       gameBoard();
       updateEnvironment();
       // skyColor(level);
-      time = baseTime + 10 * level; //cada nivel aumenta 10 segundos
+      // time = baseTime + 10 * level; 
     }
   }
 };
