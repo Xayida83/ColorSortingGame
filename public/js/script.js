@@ -2,12 +2,12 @@ let viewerMain = document.getElementById("visor__main");
 
 let level;
 let maxLevel;
+
 let maxHolder;
 let maxItems;
-// let character;
+
 let prePost;
-let time;
-let baseTime = 40;
+
 
 let holdersArr = [];
 let itemHolderArr = [];
@@ -16,49 +16,6 @@ let click = true;
 let interval;
 
 let end = false;
-
-
-//inicializo el audio de fondo de forma global como audioBg
-// let audioBg = new Audio("./assets/audio/musicaBackground.wav");
-// audioBg.volume = 0.1;
-// audioBg.loop = true;
-
-
-// const audioBallOut = () => {
-//   let audio = new Audio("./assets/audio/sacarBola.wav");
-//   audio.volume = 0.6;
-//   audio.play();
-// };
-
-// const audioMeterBall = () => {
-//   let audio = new Audio("./assets/audio/meterBola.wav");
-//   audio.volume = 0.6;
-//   audio.play();
-// };
-
-// const audioMovementBack = () => {
-//   let audio = new Audio("./assets/audio/movimientoFallido.wav");
-//   audio.volume = 0.4;
-//   audio.play();
-// };
-
-// const audioLevelUp = () => {
-//   let audio = new Audio("./assets/audio/lvlUp.wav");
-//   audio.volume = 0.5;
-//   audio.play();
-// };
-
-// const audioLose = () => {
-//   let audio = new Audio("./assets/audio/juegoPerdido.mp3");
-//   audio.volume = 0.4;
-//   audio.play();
-// };
-
-// const audioWin = () => {
-//   let audio = new Audio("./assets/audio/juegoGanado.wav");
-//   audio.volume = 0.4;
-//   audio.play();
-// };
 
 function updateEnvironment(posAnt = null, posPost = null) {
   function editEnvironment(posAnt, posPost) {
@@ -101,7 +58,7 @@ function updateEnvironment(posAnt = null, posPost = null) {
     mainHolders.style.top = "130px";
     mainHolders.id = "main__frascos";
 
-    //Añado un listener al contenedor de los frascos
+    //add a listener to the jar container
     mainHolders.addEventListener("click", handleMove);
 
     let holders = document.createDocumentFragment(); //TODO outcomment?
@@ -114,7 +71,6 @@ function updateEnvironment(posAnt = null, posPost = null) {
       holder.style.top = "0";
       
       let items = document.createDocumentFragment();
-      //frasco.addEventListener("click", accionFrasco);
 
       for (let index2 = 0; index2 < holdersArr[index].length; index2++) {
         let item = document.createElement("DIV");//TODO DIV?
@@ -124,9 +80,7 @@ function updateEnvironment(posAnt = null, posPost = null) {
       }
       holder.append(items);
       mainHolders.append(holder);
-      // holder.append(holder);
       viewerMain.append(mainHolders);
-      //visor__main.append(frascos);
     }
   }
 
@@ -138,13 +92,7 @@ function updateEnvironment(posAnt = null, posPost = null) {
 }
 
 const startEnviroment = () => {
-  // if (!audioBg.paused) {
-  //   audioBg.pause();
-  //   audioBg.currentTime = 0;
-  // }
-
-  // audioBg.play();
-
+  
   if (holdersArr.length != 0) {
     holdersArr = [];
   }
@@ -153,19 +101,18 @@ const startEnviroment = () => {
   }
 
   //inicioTempo();
-  character = viewerMain.querySelector("#character_1");
+  // character = viewerMain.querySelector("#character_1");
   // character.remove();
 
   let mainSection = document.getElementById("main__section");
-  mainSection.remove();
+  if (mainSection) mainSection.remove();
 
-  textoTitulo = viewerMain.querySelector("#visor__div__texto"); //TODO rename textTitulo
-  if (textoTitulo != null) {
-    textoTitulo.remove();
-  }
+  const textoTitulo = viewerMain.querySelector("#visor__div__texto"); //TODO rename textTitulo
+  // if (titleText) titleText.remove();
 
   //Constants settings. (These are the parameters with which the game starts, they change with each level)
-  time = 40;
+  // time = 40;
+  // Set game parameters (these can be adjusted later)
   level = 0;
   maxLevel = 3;
   maxHolder = 4;
@@ -173,8 +120,8 @@ const startEnviroment = () => {
 
   gameBoard();
   updateEnvironment();
-  startTime();
-  skyColor(level);
+  // startTime();
+  // skyColor(level);
 };
 
 function gameBoard() {
@@ -197,99 +144,15 @@ function gameBoard() {
       const randomHolder2 = Math.floor(Math.random() * (maxHolder - 2));
       const randomItem2 = Math.floor(Math.random() * maxItems);
 
-      let aux = holdersArr[randomHolder1][randomItem1]; //TODO aux? 
-      holdersArr[randomHolder1][randomItem1] =
-        holdersArr[randomHolder2][randomItem2];
-      holdersArr[randomHolder2][randomItem2] = aux;
+       // Swap items between two random positions
+       let temp = holdersArr[randomHolder1][randomItem1];
+       holdersArr[randomHolder1][randomItem1] =
+         holdersArr[randomHolder2][randomItem2];
+       holdersArr[randomHolder2][randomItem2] = temp;
     }
-  } while (checkingWinningConditions()); // if reverse the check, the board starts sorted
-  // check that the generated board is not generated starts sorted
+  } while (checkingWinningConditions());  // Ensure the board doesn't start solved
 }
 
-const startTime = () => {
-  const viewerHeaderTimer = document.getElementById(
-    "visorHeader__div__temporizador"
-  );
-  viewerHeaderTimer.classList.add("temporizadorOn"); //TODO rename classname temporizadorOn
-
-  let minutes = Math.floor(time / 60).toString();
-  let seconds = Math.floor(time % 60).toString();
-  viewerHeaderTimer.children[1].textContent =
-    minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0");
-
-  interval = setInterval(() => {
-    time--;
-
-    let minutes = Math.floor(time / 60).toString();
-    let seconds = Math.floor(time % 60).toString();
-
-    viewerHeaderTimer.children[1].textContent =
-      minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0");
-
-    if (time == 0) {
-      debugger;
-      ganado = false;
-      // audioLose();
-      deleteEnvironment();
-      startEnd(ganado);
-    }
-  }, 1000);
-};
-
-// function loadCharacter() {
-//   let character = document.createElement("IMG");
-//   character.style.position = "absolute";
-//   character.style.zIndex = "30";
-//   character.style.height = "400px";
-//   character.style.width = "400px";
-//   character.style.left = "650px";
-//   character.style.top = "90px";
-//   character.id = "character_1";
-//   character.alt = "Theo_personaje"
-//   debugger;
-//   character.src = "assets/png/character2.png";
-//   return character;
-// }
-
-const homeIntro = () => {
-  createTitle("Sort the colors", "BallSortPuzzle");
-
-  setTimeout(() => {
-    visor__div__texto.remove(); //TODO rename visor__div__texto
-    createTitle(null, "Ayuda a Theo a encontrar los colores");
-    tituloPequeño.style.top = "160px";
-
-    setTimeout(() => {
-      visor__div__texto.remove();
-      debugger;
-      // character = loadCharacter();
-      // viewerMain.append(character);
-      crateStartButton();
-      section__a.addEventListener("click", startEnviroment);
-    }, 4000);
-  }, 4000);
-};
-
-function createTitle(largeText = null, smallText = null) {
-  visor__div__texto = document.createElement("DIV");
-  visor__div__texto.id = "visor__div__texto";
-
-  tituloGrande = document.createElement("H1");
-  tituloGrande.textContent = largeText;
-  tituloGrande.classList.add("letraTituloGrande");
-
-  if (smallText) {
-    tituloPequeño = document.createElement("H2");
-    tituloPequeño.textContent = smallText;
-    tituloPequeño.classList.add("letraTituloPeq");
-  }
-
-  visor__div__texto.append(tituloGrande);
-  if (smallText) {
-    visor__div__texto.append(tituloPequeño);
-  }
-  viewerMain.append(visor__div__texto);
-}
 
 const gain = () => {
   let win = checkingWinningConditions();
@@ -314,56 +177,55 @@ const gain = () => {
       deleteEnvironment();
       gameBoard();
       updateEnvironment();
-      skyColor(level);
+      // skyColor(level);
       time = baseTime + 10 * level; //cada nivel aumenta 10 segundos
     }
   }
 };
 
-const skyColor = (level) => {
-  if (level > 2) {
-    level = 2;
-  }
-//TODO erase?
-  const skies = viewerMain.parentNode;
-  const bg = skies.firstChild.nextSibling;
-  switch (level) {
-    case 0:
-      skies.classList = [...skies.classList].filter(
-        (clase) =>
-          clase != "cieloAzul" &&
-          clase != "cieloInicial" &&
-          clase != "cieloGris" &&
-          clase != "cieloNaranja"
-      );
-      skies.classList.add("cieloGris");
+//   if (level > 2) {
+//     level = 2;
+//   }
+// //TODO erase?
+//   const skies = viewerMain.parentNode;
+//   const bg = skies.firstChild.nextSibling;
+//   switch (level) {
+//     case 0:
+//       skies.classList = [...skies.classList].filter(
+//         (clase) =>
+//           clase != "cieloAzul" &&
+//           clase != "cieloInicial" &&
+//           clase != "cieloGris" &&
+//           clase != "cieloNaranja"
+//       );
+//       skies.classList.add("cieloGris");
 
-      bg.classList = [...bg.classList].filter(
-        (clase) =>
-          clase != "fondoGris3" &&
-          clase != "fondoGris2" &&
-          clase != "fondoGris1"
-      );
-      bg.classList.add("fondoGris1");
-      break;
-    case 1:
-      skies.classList.remove("cieloGris");
-      skies.classList.add("cieloNaranja");
+//       bg.classList = [...bg.classList].filter(
+//         (clase) =>
+//           clase != "fondoGris3" &&
+//           clase != "fondoGris2" &&
+//           clase != "fondoGris1"
+//       );
+//       bg.classList.add("fondoGris1");
+//       break;
+//     case 1:
+//       skies.classList.remove("cieloGris");
+//       skies.classList.add("cieloNaranja");
 
-      bg.classList.remove("fondoGris1");
-      bg.classList.add("fondoGris2");
-      break;
-    case 2:
-      skies.classList.remove("cieloNaranja");
-      skies.classList.add("cieloAzul");
+//       bg.classList.remove("fondoGris1");
+//       bg.classList.add("fondoGris2");
+//       break;
+//     case 2:
+//       skies.classList.remove("cieloNaranja");
+//       skies.classList.add("cieloAzul");
 
-      bg.classList.remove("fondoGris2");
-      bg.classList.add("fondoGris3");
-      break;
-    default:
-      break;
-  }
-};
+//       bg.classList.remove("fondoGris2");
+//       bg.classList.add("fondoGris3");
+//       break;
+//     default:
+//       break;
+//   }
+// };
 
 const deleteEnvironment = () => {
   const main__frascos = document.getElementById("main__frascos");
@@ -513,7 +375,6 @@ function checkingWinningConditions() {
 }
 
 function startEnd(win) {
-  turnOffTimer();
 
   if (win) {
     console.log("WON");
@@ -535,39 +396,13 @@ function startEnd(win) {
       createTitle("TRY AGAIN", "YOU CAN DO IT!");
     }
 
-    // character = loadCharacter();
     viewerMain.append(character);
-    crateStartButton();
+    // crateStartButton(); //TODO create a redo button
     section__a.addEventListener("click", startEnviroment);
   }, 4000);
 }
 
-function turnOffTimer() {
-  const gameBoard = viewerMain.previousElementSibling.querySelector(
-    "#visorHeader__div__temporizador"
-  );
-  gameBoard.children[1].textContent = "00:00";
-  clearInterval(interval);
-}
 
-function crateStartButton() {
-  main__section = document.createElement("SECTION");
-  section__a = document.createElement("A");
-  a__img = document.createElement("IMG");
-
-  main__section.classList.add("main__boton");
-  main__section.id = "main__section";
-  a__img.classList.add("a__boton");
-  a__img.src = "assets/png/—Pngtree—start button in pixel art_7949383 (1).png";
-  section__a.href = "#";
-  a__img.alt = "Imagen_start";
-
-  main__section.append(section__a);
-  section__a.append(a__img);
-  viewerMain.appendChild(main__section);
-}
-
-document.addEventListener("DOMContentLoaded", homeIntro);
-// document.addEventListener("DOMContentLoaded", () => {
-//   generateEnvironment();
-// });
+document.addEventListener("DOMContentLoaded", () => {
+  startEnviroment();
+});
