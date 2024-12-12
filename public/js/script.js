@@ -380,7 +380,7 @@ const handleMove = (e) => {
 
       if (e.target.classList[0].startsWith("pixel")) {
         if (click) {
-          audioBallOut();
+          // audioBallOut();
           prePost = parseInt(e.target.parentNode.id.slice(6));
 
           let numberOfItems = holdersArr[prePost].length; //Cada bola mide 40px
@@ -399,7 +399,7 @@ const handleMove = (e) => {
 
           if (holdersArr[posicionMeter].length > 0) {
             if (prePost == posicionMeter || top1Value != top2Value) {
-              audioMovementBack();
+              // audioMovementBack();
               updateEnvironment(prePost, posicionMeter);
               click = true;
             }
@@ -414,7 +414,7 @@ const handleMove = (e) => {
               holdersArr[posicionMeter].unshift(
                 holdersArr[prePost].shift()
               );
-              audioMeterBall();
+              // audioMeterBall();
               updateEnvironment(prePost, posicionMeter);
               click = true;
             }
@@ -436,7 +436,7 @@ const handleMove = (e) => {
         console.log(e.target.id.slice(6));
         if (click) {
           console.log("sacar");
-          audioBallOut();
+          // audioBallOut();
           //bolaCambio = e.target.parentNode.firstChild.classList[1].slice(5);
           prePost = parseInt(e.target.id.slice(6));
 
@@ -456,7 +456,7 @@ const handleMove = (e) => {
 
           if (holdersArr[positionMeter].length > 0) {
             if (prePost == positionMeter || topValue1 != topValue2) {
-              audioMovementBack();
+              // audioMovementBack();
               updateEnvironment(prePost, positionMeter);
               click = true;
             }
@@ -472,7 +472,7 @@ const handleMove = (e) => {
               holdersArr[positionMeter].unshift(
                 holdersArr[prePost].shift()
               );
-              audioMeterBall();
+              // audioMeterBall();
               updateEnvironment(prePost, positionMeter);
               click = true;
             }
