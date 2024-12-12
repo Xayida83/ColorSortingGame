@@ -4,7 +4,7 @@ let level;
 let maxLevel;
 let maxHolder;
 let maxItems;
-let character;
+// let character;
 let prePost;
 let time;
 let baseTime = 40;
@@ -19,46 +19,46 @@ let end = false;
 
 
 //inicializo el audio de fondo de forma global como audioBg
-let audioBg = new Audio("./assets/audio/musicaBackground.wav");
-audioBg.volume = 0.1;
-audioBg.loop = true;
+// let audioBg = new Audio("./assets/audio/musicaBackground.wav");
+// audioBg.volume = 0.1;
+// audioBg.loop = true;
 
 
-const audioBallOut = () => {
-  let audio = new Audio("./assets/audio/sacarBola.wav");
-  audio.volume = 0.6;
-  audio.play();
-};
+// const audioBallOut = () => {
+//   let audio = new Audio("./assets/audio/sacarBola.wav");
+//   audio.volume = 0.6;
+//   audio.play();
+// };
 
-const audioMeterBall = () => {
-  let audio = new Audio("./assets/audio/meterBola.wav");
-  audio.volume = 0.6;
-  audio.play();
-};
+// const audioMeterBall = () => {
+//   let audio = new Audio("./assets/audio/meterBola.wav");
+//   audio.volume = 0.6;
+//   audio.play();
+// };
 
-const audioMovementBack = () => {
-  let audio = new Audio("./assets/audio/movimientoFallido.wav");
-  audio.volume = 0.4;
-  audio.play();
-};
+// const audioMovementBack = () => {
+//   let audio = new Audio("./assets/audio/movimientoFallido.wav");
+//   audio.volume = 0.4;
+//   audio.play();
+// };
 
-const audioLevelUp = () => {
-  let audio = new Audio("./assets/audio/lvlUp.wav");
-  audio.volume = 0.5;
-  audio.play();
-};
+// const audioLevelUp = () => {
+//   let audio = new Audio("./assets/audio/lvlUp.wav");
+//   audio.volume = 0.5;
+//   audio.play();
+// };
 
-const audioLose = () => {
-  let audio = new Audio("./assets/audio/juegoPerdido.mp3");
-  audio.volume = 0.4;
-  audio.play();
-};
+// const audioLose = () => {
+//   let audio = new Audio("./assets/audio/juegoPerdido.mp3");
+//   audio.volume = 0.4;
+//   audio.play();
+// };
 
-const audioWin = () => {
-  let audio = new Audio("./assets/audio/juegoGanado.wav");
-  audio.volume = 0.4;
-  audio.play();
-};
+// const audioWin = () => {
+//   let audio = new Audio("./assets/audio/juegoGanado.wav");
+//   audio.volume = 0.4;
+//   audio.play();
+// };
 
 function updateEnvironment(posAnt = null, posPost = null) {
   function editEnvironment(posAnt, posPost) {
@@ -138,12 +138,12 @@ function updateEnvironment(posAnt = null, posPost = null) {
 }
 
 const startEnviroment = () => {
-  if (!audioBg.paused) {
-    audioBg.pause();
-    audioBg.currentTime = 0;
-  }
+  // if (!audioBg.paused) {
+  //   audioBg.pause();
+  //   audioBg.currentTime = 0;
+  // }
 
-  audioBg.play();
+  // audioBg.play();
 
   if (holdersArr.length != 0) {
     holdersArr = [];
@@ -154,7 +154,7 @@ const startEnviroment = () => {
 
   //inicioTempo();
   character = viewerMain.querySelector("#character_1");
-  character.remove();
+  // character.remove();
 
   let mainSection = document.getElementById("main__section");
   mainSection.remove();
@@ -236,20 +236,20 @@ const startTime = () => {
   }, 1000);
 };
 
-function loadCharacter() { //TODO outcomment
-  let character = document.createElement("IMG");
-  character.style.position = "absolute";
-  character.style.zIndex = "30";
-  character.style.height = "400px";
-  character.style.width = "400px";
-  character.style.left = "650px";
-  character.style.top = "90px";
-  character.id = "character_1";
-  character.alt = "Theo_personaje"
-  debugger;
-  character.src = "assets/png/character2.png";
-  return character;
-}
+// function loadCharacter() {
+//   let character = document.createElement("IMG");
+//   character.style.position = "absolute";
+//   character.style.zIndex = "30";
+//   character.style.height = "400px";
+//   character.style.width = "400px";
+//   character.style.left = "650px";
+//   character.style.top = "90px";
+//   character.id = "character_1";
+//   character.alt = "Theo_personaje"
+//   debugger;
+//   character.src = "assets/png/character2.png";
+//   return character;
+// }
 
 const homeIntro = () => {
   createTitle("Sort the colors", "BallSortPuzzle");
@@ -262,8 +262,8 @@ const homeIntro = () => {
     setTimeout(() => {
       visor__div__texto.remove();
       debugger;
-      character = loadCharacter();
-      viewerMain.append(character);
+      // character = loadCharacter();
+      // viewerMain.append(character);
       crateStartButton();
       section__a.addEventListener("click", startEnviroment);
     }, 4000);
@@ -535,7 +535,7 @@ function startEnd(win) {
       createTitle("TRY AGAIN", "YOU CAN DO IT!");
     }
 
-    character = loadCharacter();
+    // character = loadCharacter();
     viewerMain.append(character);
     crateStartButton();
     section__a.addEventListener("click", startEnviroment);
@@ -568,3 +568,6 @@ function crateStartButton() {
 }
 
 document.addEventListener("DOMContentLoaded", homeIntro);
+// document.addEventListener("DOMContentLoaded", () => {
+//   generateEnvironment();
+// });
