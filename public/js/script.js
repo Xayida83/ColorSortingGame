@@ -81,7 +81,7 @@ function updateEnvironment(previousPos = null, currentPos = null) {
     // Add balls to the previous position jar
     for (let index = 0; index < jarArray[previousPos].length; index++) {
       let ball = document.createElement("DIV");
-      ball.classList.add("pixel-ball");
+      ball.classList.add("pixel_ball");
       ball.classList.add("color" + jarArray[previousPos][index]);
       mainJarsContainer.children[previousPos].append(ball);
     }
@@ -96,7 +96,7 @@ function updateEnvironment(previousPos = null, currentPos = null) {
 
       for (let index = 0; index < jarArray[currentPos].length; index++) {
         let ball = document.createElement("DIV");
-        ball.classList.add("pixel-ball");
+        ball.classList.add("pixel_ball");
         ball.classList.add("color" + jarArray[currentPos][index]);
         mainJarsContainer.children[currentPos].append(ball);
       }
@@ -127,7 +127,7 @@ function updateEnvironment(previousPos = null, currentPos = null) {
 
       for (let ballIndex = 0; ballIndex < jarArray[index].length; ballIndex++) {
         let ball = document.createElement("DIV");
-        ball.classList.add("pixel-ball");
+        ball.classList.add("pixel_ball");
         ball.classList.add("color" + jarArray[index][ballIndex]);
         ballsFragment.append(ball);
       }

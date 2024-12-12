@@ -52,7 +52,7 @@
     transition: 200ms;
 }
 
-.pixel-ball {
+.pixel_ball {
     width: 40px;
     height: 40px;
     border-radius: 50%; /* Makes it a circle */
